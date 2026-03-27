@@ -890,39 +890,51 @@ create policy "anon select" on public.match_sessions for select using (true);`}<
                 <p className="text-zinc-500 text-sm">Gemini is analyzing your screenshot…</p>
               </div>
             ) : (
-              <ScrollArea className="h-[420px]">
-                <div className="p-4 space-y-5">
+              <ScrollArea className="h-[480px]">
+                <div className="p-4 space-y-6">
                   {Object.entries(grouped).map(([location, items], i) => (
                     <div key={location}>
-                      {i > 0 && <Separator className="bg-zinc-800 my-4" />}
+                      {i > 0 && <Separator className="bg-zinc-800 mb-6" />}
                       <p className="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-3">{location}</p>
-                      <div className="space-y-2.5">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         {items.map((match, idx) => (
-                          <div key={idx} className="rounded-lg bg-zinc-800/60 border border-zinc-700/40 overflow-hidden">
-                            <div className="flex items-stretch">
-                              {/* thumbnail */}
-                              <div className="w-24 shrink-0 bg-zinc-950 border-r border-zinc-700/40 flex items-center justify-center p-2">
-                                <div className="transform scale-75 origin-center">
-                                  {PREVIEWS[match.component] ?? (
-                                    <div className="h-10 w-10 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center">
-                                      <svg className="h-5 w-5 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" /></svg>
+                          <div key={idx} className="group rounded-xl bg-zinc-900 border border-zinc-800 overflow-hidden hover:border-zinc-600 transition-all hover:shadow-lg hover:shadow-black/30">
+                            {/* thumbnail */}
+                            <div className="h-[100px] bg-zinc-950 border-b border-zinc-800 flex items-center justify-center p-3 relative overflow-hidden">
+                              <div className="transform scale-90 group-hover:scale-100 transition-transform duration-200">
+                                {PREVIEWS[match.component] ?? (
+                                  <div className="flex flex-col items-center gap-2">
+                                    <div className="h-8 w-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center">
+                                      <svg className="h-4 w-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" /></svg>
                                     </div>
-                                  )}
-                                </div>
-                              </div>
-                              {/* details */}
-                              <div className="flex-1 p-3 space-y-1.5 min-w-0">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <a href={`${DOCS_BASE}${slug(match.component)}`} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-white hover:text-zinc-300 underline underline-offset-2 transition-colors">{match.component}</a>
-                                  <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${CONFIDENCE_COLORS[match.confidence]}`}>{match.confidence}</span>
-                                </div>
-                                <p className="text-xs text-zinc-400 leading-relaxed"><span className="text-zinc-300">{match.element}</span> — {match.reason}</p>
-                                {match.props && (
-                                  <code className="block text-xs bg-zinc-950 text-emerald-400 px-3 py-1.5 rounded-lg font-mono truncate">
-                                    &lt;{match.component.replace(/\s+/g, "")} {match.props} /&gt;
-                                  </code>
+                                  </div>
                                 )}
                               </div>
+                              {/* confidence badge */}
+                              <div className="absolute top-2 right-2">
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded-full border font-medium ${CONFIDENCE_COLORS[match.confidence]}`}>
+                                  {match.confidence}
+                                </span>
+                              </div>
+                            </div>
+                            {/* info */}
+                            <div className="p-3 space-y-1.5">
+                              <a
+                                href={`${DOCS_BASE}${slug(match.component)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs font-semibold text-zinc-100 hover:text-white transition-colors block truncate"
+                              >
+                                {match.component}
+                              </a>
+                              <p className="text-[10px] text-zinc-500 leading-relaxed line-clamp-2">
+                                <span className="text-zinc-400">{match.element}</span> — {match.reason}
+                              </p>
+                              {match.props && (
+                                <code className="block text-[9px] bg-zinc-950 text-emerald-400 px-2 py-1 rounded-md font-mono truncate">
+                                  {match.props}
+                                </code>
+                              )}
                             </div>
                           </div>
                         ))}
